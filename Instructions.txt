@@ -2,6 +2,11 @@ ___________________________________________________________
 Create   Ubuntu Machine Instance for Jenkins and Sonarqube
 -----------------------------------------------------------
 
+
+Configure Jenkins Instance  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
 install java : sudo apt install openjdk-21-jre-headless
 
 
@@ -112,5 +117,31 @@ echo "======================================"
 
 docker --version
 
-==================================
+Give Permission :   sudo chmod 666 /var/run/docker.sock
 
+
+=======================================================================================================
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Configure Sonarqube Instance >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+Install Docker with docker.sh file same as jenkins instance
+and give permission 
+
+*******************************************************************************************************************
+
+Install Trivy on Jenkins Instance :  
+
+sudo apt-get install wget gnupg
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy
+
+
+
+*********************************************************************************************************************
