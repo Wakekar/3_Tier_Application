@@ -1,1 +1,116 @@
+___________________________________________________________
+Create   Ubuntu Machine Instance for Jenkins and Sonarqube
+-----------------------------------------------------------
+
+install java : sudo apt install openjdk-21-jre-headless
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Install Jenkins :  
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+***********************************************************************************
+
+#!/bin/bash
+
+# Update the Debian apt repositories, install OpenJDK 21
+
+sudo apt update -y
+sudo apt install fontconfig openjdk-21-jre -y
+java -version
+
+# A LTS (Long-Term Support) release is chosen 
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update -y
+sudo apt install jenkins -y
+
+# Enable the Jenkins service to start at boot 
+
+sudo systemctl enable jenkins
+
+# Start the Jenkins service
+
+sudo systemctl start jenkins
+
+# Check the status of the Jenkins service 
+
+sudo systemctl status jenkins
+
+********************************************************************************************************************
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Install Docker
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+vi docker.sh ----> Paste the below content ---->
+*********************************************************************************************************************
+
+#!/bin/bash
+
+# Exit immediately if any command fails
+set -e
+
+echo "======================================"
+echo " Docker Installation Started"
+echo "======================================"
+
+# Update package list
+sudo apt update
+
+# Install required packages
+sudo apt install -y ca-certificates curl
+
+# Create directory for Docker GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# Download Docker GPG key
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+-o /etc/apt/keyrings/docker.asc
+
+# Set proper permissions
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker Repository
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Update package index
+sudo apt update
+
+# Install Docker Engine
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Enable Docker Service
+sudo systemctl enable docker
+
+# Start Docker Service
+sudo systemctl start docker
+
+# Verify Docker Service
+sudo systemctl status docker --no-pager
+
+# Verify Installation
+docker --version
+docker compose version
+
+echo "======================================"
+echo " Docker Installed Successfully"
+echo "======================================"
+
+*********************************************************************************************************************
+----> esc ----> :wq ----> sudo chmod +x docker.sh ----> ./docker.sh
+
+docker --version
+
+==================================
 
