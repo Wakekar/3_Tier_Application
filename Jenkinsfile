@@ -53,7 +53,6 @@ pipeline {
                 script {
                     withDockerRegistry(
                         credentialsId: 'docker-cred',
-                        toolName: 'docker'
                     ) {
                         sh 'docker build -t aniketwakekar/camp:latest .'
                     }
