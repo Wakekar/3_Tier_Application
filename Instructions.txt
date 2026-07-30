@@ -130,8 +130,9 @@ Configure Sonarqube Instance >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 Install Docker with docker.sh file same as jenkins instance
-and give permission 
+and     give permission   >>>   sudo chmod 666 /var/run/docker.sock
 
+docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 *******************************************************************************************************************
 
 Install Trivy on Jenkins Instance :  
