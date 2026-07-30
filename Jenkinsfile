@@ -20,29 +20,31 @@ pipeline {
 
         stage('Install Package Dependencies') {
             steps {
-                sh "npm install"
+                sh 'npm install'
             }
         }
 
         stage('Unit Tests') {
             steps {
-                sh "npm test"
+                sh 'npm test'
             }
         }
 
         stage('Trivy FS Scan') {
             steps {
-                sh "trivy fs --format table -o fs-report.html ."
+                sh 'trivy fs --format table -o fs-report.html .'
             }
         }
 
-        stage('SonarQube') {
+        stage('SonarQube Analysis') {
             steps {
-                sh '''
-                    $SCANNER_HOME/bin/sonar-scanner \
-                    -Dsonar.projectKey=Campground \
-                    -Dsonar.projectName=Campground
-                '''
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=Campground \
+                        -Dsonar.projectName=Campground
+                    '''
+                }
             }
         }
 
@@ -53,7 +55,7 @@ pipeline {
                         credentialsId: 'docker-cred',
                         toolName: 'docker'
                     ) {
-                        sh "docker build -t aniketwakekar/camp:latest ."
+                        sh 'docker build -t aniketwakekar/camp:latest .'
                     }
                 }
             }
@@ -61,7 +63,7 @@ pipeline {
 
         stage('Trivy Image Scan') {
             steps {
-                sh "trivy image --format table -o image-report.html aniketwakekar/camp:latest"
+                sh 'trivy image --format table -o image-report.html aniketwakekar/camp:latest'
             }
         }
 
@@ -72,7 +74,7 @@ pipeline {
                         credentialsId: 'docker-cred',
                         toolName: 'docker'
                     ) {
-                        sh "docker push aniketwakekar/camp:latest"
+                        sh 'docker push aniketwakekar/camp:latest'
                     }
                 }
             }
