@@ -1,0 +1,10 @@
+node_modules/
+
+reports/
+
+fs-report.html
+image-report.html
+
+coverage/
+
+*.log
