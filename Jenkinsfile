@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-        IMAGE_NAME = "aniketwakekar/camp:latest"
+        SCANNER_HOME = tool('sonar-scanner')
+        IMAGE_NAME = 'aniketwakekar/camp:latest'
     }
 
     stages {
@@ -33,7 +33,11 @@ pipeline {
 
         stage('Trivy File System Scan') {
             steps {
-                sh 'trivy fs --format table -o fs-report.html .'
+                sh '''
+                trivy fs \
+                --format table \
+                --output fs-report.html .
+                '''
             }
         }
 
@@ -42,8 +46,8 @@ pipeline {
                 withSonarQubeEnv('sonar') {
                     sh '''
                     $SCANNER_HOME/bin/sonar-scanner \
-                      -Dsonar.projectKey=Campground \
-                      -Dsonar.projectName=Campground
+                    -Dsonar.projectKey=Campground \
+                    -Dsonar.projectName=Campground
                     '''
                 }
             }
@@ -52,7 +56,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker build -t $IMAGE_NAME .
+                docker build -t ${IMAGE_NAME} .
                 '''
             }
         }
@@ -60,7 +64,10 @@ pipeline {
         stage('Trivy Image Scan') {
             steps {
                 sh '''
-                trivy image --format table -o image-report.html $IMAGE_NAME
+                trivy image \
+                --format table \
+                --output image-report.html \
+                ${IMAGE_NAME}
                 '''
             }
         }
@@ -75,7 +82,9 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                    echo "$DOCKER_PASSWORD" | docker login \
+                    -u "$DOCKER_USERNAME" \
+                    --password-stdin
                     '''
                 }
             }
@@ -84,7 +93,25 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                docker push $IMAGE_NAME
+                docker push ${IMAGE_NAME}
+                '''
+            }
+        }
+
+        stage('Deploy To EKS') {
+            steps {
+                sh '''
+                kubectl apply -f manifests/dss.yml
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                kubectl get pods -n webapps
+                kubectl get svc -n webapps
+                kubectl get deployment -n webapps
                 '''
             }
         }
@@ -97,16 +124,23 @@ pipeline {
     }
 
     post {
+
         always {
             archiveArtifacts artifacts: '*.html', allowEmptyArchive: true
         }
 
         success {
-            echo 'Pipeline completed successfully.'
+            echo '========================================='
+            echo ' Pipeline Executed Successfully'
+            echo ' Application Deployed to Amazon EKS'
+            echo '========================================='
         }
 
         failure {
-            echo 'Pipeline execution failed.'
+            echo '========================================='
+            echo ' Pipeline Execution Failed'
+            echo ' Please Check Jenkins Console Logs'
+            echo '========================================='
         }
 
         cleanup {
