@@ -20,7 +20,7 @@ kind: Deployment
 metadata:
   name: yelp-camp-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: yelp-camp
@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: yelp-camp-container
-          image: aniketwakekar/campa:latest
+          image: aniketwakekar/camp:latest
           ports:
             - containerPort: 3000
           env:
