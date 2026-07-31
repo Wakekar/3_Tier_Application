@@ -30,190 +30,221 @@ docker compose up
 ```
 # 📸 Project Screenshots
 
-This section showcases the complete workflow of the project, from application deployment to CI/CD pipeline execution, security scanning, cloud infrastructure, and Kubernetes deployment.
+This section demonstrates the complete workflow of the application, from development to production deployment on Amazon EKS using a complete DevOps CI/CD pipeline.
 
 ---
 
-## 🖥️ Application Screenshots
+# 🖥️ Application Screenshots
 
-### 🏠 1. Application Landing Page
+## 🏠 1. Application Landing Page
 
-![Application Landing Page](01_Application_Landing_Page.png)
-
----
-
-### 🌐 2. Application Home Page
-
-![Application Home Page](02_Application_2.png)
+<p align="center">
+  <img src="./screenshots/01_Application_Landing_Page.png" width="100%">
+</p>
 
 ---
 
-### ⭐ 3. Application Review Page
+## 🌐 2. Application Home Page
 
-![Application Review Page](03_Application_Review.png)
-
----
-
-### 👤 4. User Registration
-
-![User Registration](07_User_registration.png)
+<p align="center">
+  <img src="./screenshots/02_Application_2.png" width="100%">
+</p>
 
 ---
 
-## ☁️ AWS Infrastructure
+## ⭐ 3. Application Review Page
 
-### 🖥️ 5. AWS EC2 Instances
-
-![AWS EC2 Instances](04_Instances.png)
-
----
-
-### ☁️ 6. AWS CloudFormation Stack
-
-![AWS CloudFormation](05_Cloude_Formation.png)
+<p align="center">
+  <img src="./screenshots/03_Application_Review.png" width="100%">
+</p>
 
 ---
 
-### ☸️ 7. Amazon EKS Cluster
+## 👤 4. User Registration
 
-![Amazon EKS Cluster](20_EKS_Cluster.png)
-
----
-
-## 🔐 Application Configuration
-
-### ☁️ 8. Cloudinary API Keys
-
-![Cloudinary API Keys](06_cloudinary_keys.png)
+<p align="center">
+  <img src="./screenshots/07_User_registration.png" width="100%">
+</p>
 
 ---
 
-### 🗺️ 9. MapBox Token Configuration
+# ☁️ AWS Infrastructure
 
-![MapBox Token](09_MapBox_Token.png)
+## 🖥️ 5. AWS EC2 Instances
 
----
-
-## 🗄️ Database
-
-### 🍃 10. MongoDB Database Entry
-
-![MongoDB Database Entry](08_Database_Entry.png)
+<p align="center">
+  <img src="./screenshots/04_Instances.png" width="100%">
+</p>
 
 ---
 
-### 🗄️ 11. MongoDB Atlas Cluster
+## ☁️ 6. AWS CloudFormation Stack
 
-![MongoDB Atlas Cluster](15_MongoDB_Cluster.png)
-
----
-
-### 📈 12. MongoDB Metrics
-
-![MongoDB Metrics](16_MongoDB_Metrix.png)
+<p align="center">
+  <img src="./screenshots/05_Cloude_Formation.png" width="100%">
+</p>
 
 ---
 
-## 🚀 Jenkins CI/CD Pipeline
+## ☸️ 7. Amazon EKS Cluster
 
-### ✅ 13. Jenkins Pipeline Success
-
-![Jenkins Pipeline Success](10_Pipeline_success.png)
-
----
-
-### ☸️ 14. Jenkins Pipeline Success (ClusterIP Deployment)
-
-![Pipeline Success ClusterIP](21_Pipeline_Success_ClusterIP.png)
+<p align="center">
+  <img src="./screenshots/20_EKS_Cluster.png" width="100%">
+</p>
 
 ---
 
-## 🔍 Security Scanning
+# 🔐 Application Configuration
 
-### 🛡️ 15. Trivy Filesystem Scan Report
+## ☁️ 8. Cloudinary API Keys
 
-![Trivy Filesystem Scan](11_fs_report_Trivy.png)
-
----
-
-### 🐳 16. Trivy Docker Image Scan Report
-
-![Trivy Image Scan](12_image_report.png)
+<p align="center">
+  <img src="./screenshots/06_cloudinary_keys.png" width="100%">
+</p>
 
 ---
 
-## 📊 SonarQube Code Analysis
+## 🗺️ 9. MapBox Token Configuration
 
-### 📈 17. SonarQube Dashboard
-
-![SonarQube Dashboard](13_Sonarqube-Report.png)
-
----
-
-### 📑 18. SonarQube Code Quality Report
-
-![SonarQube Code Report](14_Code_Report.png)
+<p align="center">
+  <img src="./screenshots/09_MapBox_Token.png" width="100%">
+</p>
 
 ---
 
-### 📊 19. SonarQube Analysis Dashboard
+# 🗄️ Database
 
-![SonarQube Analysis Dashboard](17_Sonarqube_2.png)
+## 🍃 10. MongoDB Database Entry
 
----
-
-## 📦 Source Code & Container Registry
-
-### 🐙 20. GitHub Repository
-
-![GitHub Repository](18_Github.png)
+<p align="center">
+  <img src="./screenshots/08_Database_Entry.png" width="100%">
+</p>
 
 ---
 
-### 🐳 21. DockerHub Repository
+## 🗄️ 11. MongoDB Atlas Cluster
 
-![DockerHub Repository](19_DockerHub.png)
+<p align="center">
+  <img src="./screenshots/15_MongoDB_Cluster.png" width="100%">
+</p>
+
+---
+
+## 📈 12. MongoDB Metrics
+
+<p align="center">
+  <img src="./screenshots/16_MongoDB_Metrix.png" width="100%">
+</p>
 
 ---
 
-# 🎯 Project Workflow Summary
+# 🚀 Jenkins CI/CD Pipeline
 
-✔️ Application Development
+## ✅ 13. Jenkins Pipeline Success
 
-⬇️
-
-✔️ Source Code Hosted on GitHub
-
-⬇️
-
-✔️ Jenkins CI/CD Pipeline
-
-⬇️
-
-✔️ SonarQube Static Code Analysis
-
-⬇️
-
-✔️ Trivy Filesystem Security Scan
-
-⬇️
-
-✔️ Docker Image Build
-
-⬇️
-
-✔️ Trivy Docker Image Scan
-
-⬇️
-
-✔️ DockerHub Image Push
-
-⬇️
-
-✔️ Amazon EKS Deployment
-
-⬇️
-
-✔️ Application Successfully Running on Kubernetes
+<p align="center">
+  <img src="./screenshots/10_Pipeline_success.png" width="100%">
+</p>
 
 ---
+
+## ☸️ 14. Pipeline Success (ClusterIP Deployment)
+
+<p align="center">
+  <img src="./screenshots/21_Pipeline_Success_ClusterIP.png" width="100%">
+</p>
+
+---
+
+# 🔍 Security Scanning
+
+## 🛡️ 15. Trivy Filesystem Scan Report
+
+<p align="center">
+  <img src="./screenshots/11_fs_report_Trivy.png" width="100%">
+</p>
+
+---
+
+## 🐳 16. Trivy Docker Image Scan Report
+
+<p align="center">
+  <img src="./screenshots/12_image_report.png" width="100%">
+</p>
+
+---
+
+# 📊 SonarQube Code Analysis
+
+## 📈 17. SonarQube Dashboard
+
+<p align="center">
+  <img src="./screenshots/13_Sonarqube-Report.png" width="100%">
+</p>
+
+---
+
+## 📑 18. SonarQube Code Quality Report
+
+<p align="center">
+  <img src="./screenshots/14_Code_Report.png" width="100%">
+</p>
+
+---
+
+## 📊 19. SonarQube Analysis Dashboard
+
+<p align="center">
+  <img src="./screenshots/17_Sonarqube_2.png" width="100%">
+</p>
+
+---
+
+# 📦 Source Code & Container Registry
+
+## 🐙 20. GitHub Repository
+
+<p align="center">
+  <img src="./screenshots/18_Github.png" width="100%">
+</p>
+
+---
+
+## 🐳 21. DockerHub Repository
+
+<p align="center">
+  <img src="./screenshots/19_DockerHub.png" width="100%">
+</p>
+
+---
+
+# 🎯 Complete DevOps Workflow
+
+```text
+👨‍💻 Developer
+        │
+        ▼
+🐙 GitHub Repository
+        │
+        ▼
+⚙️ Jenkins CI/CD Pipeline
+        │
+        ├──────────────► 📊 SonarQube Code Analysis
+        │
+        ├──────────────► 🛡️ Trivy Filesystem Scan
+        │
+        ▼
+🐳 Docker Image Build
+        │
+        ▼
+🛡️ Trivy Docker Image Scan
+        │
+        ▼
+📦 Push Docker Image to DockerHub
+        │
+        ▼
+☸️ Amazon EKS Deployment
+        │
+        ▼
+🌐 Application Successfully Running on Kubernetes
+```
