@@ -1,0 +1,488 @@
+___________________________________________________________________________________________
+Complete CI/CD Pipeline Deployment using Jenkins, SonarQube & Amazon EKS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Architecture  : 
+
+
+Developer
+      │
+      ▼
+GitHub Repository
+      │
+      ▼
+Jenkins
+      │
+ ┌────┴─────────────┐
+ │                  │
+ ▼                  ▼
+SonarQube        Trivy Scan
+ │                  │
+ └──────┬───────────┘
+        ▼
+ Docker Build
+        ▼
+ DockerHub
+        ▼
+ Amazon EKS
+        ▼
+ Kubernetes Deployment
+
+
+Table of Contents
+Create AWS Infrastructure
+Configure Jenkins Server
+Install Jenkins
+Install Docker
+Install Trivy
+Configure Jenkins
+Configure SonarQube
+Create EKS Cluster
+Configure kubectl
+Create Kubernetes Service Account
+Configure Jenkins Credentials
+Jenkins Pipeline
+Deploy Application
+Troubleshooting
+
+Step 1 — Create AWS EC2 Instances
+
+___________________________________________________________________________________________________
+Launch 2 Ubuntu 24.04 LTS EC2 instances.
+
+Server	Purpose	Suggested Instance
+Jenkins Server	Jenkins + Docker + Trivy	t3.large / c7i-flex.large
+SonarQube Server	SonarQube	t3.large / c7i-flex.large
+
+Open Security Groups:
+
+Jenkins
+22
+8080
+SonarQube
+22
+9000
+
+___________________________________________________________________________________________________
+Step 2 — Configure Jenkins Server
+
+Update packages
+
+sudo apt update
+sudo apt upgrade -y
+
+Install Java
+
+sudo apt install openjdk-21-jre-headless -y
+
+Verify
+
+java -version
+
+Expected Output
+
+openjdk version "21"
+
+____________________________________________________________________________________________________________________
+Step 3 — Install Jenkins
+
+Create a script.
+
+vi jenkins.sh
+
+Paste:
+
+#!/bin/bash
+
+sudo apt update -y
+
+sudo apt install fontconfig openjdk-21-jre -y
+
+java -version
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+https://pkg.jenkins.io/debian-stable binary/ | \
+sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+
+sudo apt install jenkins -y
+
+sudo systemctl enable jenkins
+
+sudo systemctl start jenkins
+
+sudo systemctl status jenkins
+
+Save
+
+:wq
+
+Give permission
+
+chmod +x jenkins.sh
+
+Run
+
+./jenkins.sh
+
+Verify
+
+http://PUBLIC-IP:8080
+
+Unlock Jenkins
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+___________________________________________________________________________________________________________________________________
+Step 4 — Install Docker (Jenkins Server)
+
+Create the script
+
+vi docker.sh
+
+Paste your Docker installation script.
+
+Make executable
+
+chmod +x docker.sh
+
+Run
+
+./docker.sh
+
+Verify
+
+docker --version
+docker compose version
+
+Instead of using
+
+sudo chmod 666 /var/run/docker.sock
+
+Recommended (Production)
+
+sudo usermod -aG docker $USER
+
+newgrp docker
+
+Verify
+
+docker ps
+
+______________________________________________________________________________________________________________
+Step 5 — Install Trivy
+sudo apt install wget gnupg -y
+
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key \
+| gpg --dearmor \
+| sudo tee /usr/share/keyrings/trivy.gpg >/dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] \
+https://aquasecurity.github.io/trivy-repo/deb generic main" \
+| sudo tee /etc/apt/sources.list.d/trivy.list
+
+sudo apt update
+
+sudo apt install trivy -y
+
+Verify
+
+trivy --version
+
+_________________________________________________________________________________________________________________________________
+Step 6 — Configure SonarQube Server
+
+Install Docker using the same docker.sh script.
+
+Run SonarQube
+
+docker run -d \
+--name sonar \
+-p 9000:9000 \
+sonarqube:lts-community
+
+Verify
+
+http://PUBLIC-IP:9000
+
+Default Login
+
+Username : admin
+
+Password : admin
+
+
+Step 7 — Configure Jenkins
+__________________________________________________________________________________________
+Install the following plugins:
+
+Pipeline
+Pipeline Stage View
+Docker
+Docker Pipeline
+Docker Commons
+Kubernetes
+Kubernetes Credentials
+Kubernetes CLI
+SonarQube Scanner
+NodeJS
+Git
+GitHub
+Credentials Binding
+Blue Ocean (Optional)
+Configure Global Tools
+
+Manage Jenkins
+
+↓
+
+Tools
+
+Configure
+
+JDK
+NodeJS
+Sonar Scanner
+Docker
+Configure SonarQube Server
+
+Manage Jenkins
+
+↓
+
+System
+
+↓
+
+SonarQube Servers
+
+Add
+
+Name
+
+URL
+
+Token Credential
+Configure Global Credentials
+
+________________________________________________________________________________
+Create credentials for
+
+DockerHub
+SonarQube Token
+Kubernetes Token
+GitHub Token
+AWS Credentials
+______________________________________________________________________________
+Step 8 — Create IAM User
+
+Create a new IAM User.
+
+Attach these AWS Managed Policies.
+
+AmazonEC2FullAccess
+AmazonEKS_CNI_Policy
+AmazonEKSClusterPolicy
+AmazonEKSWorkerNodePolicy
+AWSCloudFormationFullAccess
+IAMFullAccess
+___________________________________________________________________________
+Create an additional inline policy.
+
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect":"Allow",
+      "Action":"eks:*",
+      "Resource":"*"
+    }
+  ]
+}
+
+Generate
+
+Access Key
+
+Secret Key
+
+__________________________________________________________________________________________________________________________________________
+Step 9 — Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+-o "awscliv2.zip"
+
+sudo apt install unzip -y
+
+unzip awscliv2.zip
+
+sudo ./aws/install
+
+Verify
+
+aws --version
+
+Configure
+
+aws configure
+_______________________________________________________________________________________________________________________________________
+Step 10 — Install kubectl
+
+Install the latest stable version rather than the old 1.19 binary. For example:
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+chmod +x kubectl
+
+sudo mv kubectl /usr/local/bin/
+
+Verify
+
+kubectl version --client
+
+_____________________________________________________________________________________________________________________________________________
+Step 11 — Install eksctl
+curl --silent --location \
+"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+| tar xz -C /tmp
+
+sudo mv /tmp/eksctl /usr/local/bin
+
+Verify
+
+eksctl version
+
+____________________________________________________________________________________________________________________________________________
+Step 12 — Create EKS Cluster
+eksctl create cluster \
+--name=my-Aniket-EKS-5 \
+--region=ap-south-1 \
+--zones=ap-south-1a,ap-south-1b \
+--version=1.30 \
+--without-nodegroup
+
+Associate IAM OIDC Provider (use the same cluster name consistently):    >>>>>>>>>>>>>>>>>>>>>
+
+eksctl utils associate-iam-oidc-provider \
+--region ap-south-1 \
+--cluster my-Aniket-EKS-5 \
+--approve
+
+Create Node Group >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+eksctl create nodegroup \
+--cluster=my-Aniket-EKS-5 \
+--region=ap-south-1 \
+--name=node2 \
+--node-type=c7i-flex.large \
+--nodes=3 \
+--nodes-min=2 \
+--nodes-max=4 \
+--node-volume-size=20 \
+--ssh-access \
+--ssh-public-key=Key \
+--managed \
+--asg-access \
+--external-dns-access \
+--full-ecr-access \
+--appmesh-access \
+--alb-ingress-access
+
+_____________________________________________________________________________________________________________________________________
+Step 13 — Create Kubernetes Service Account
+
+Create the webapps namespace first if it does not exist:
+
+kubectl create namespace webapps
+
+Then apply the following manifests in order:
+
+ServiceAccount
+Role
+RoleBinding
+kubectl apply -f serviceaccount.yaml
+kubectl apply -f role.yaml
+kubectl apply -f rolebinding.yaml
+
+Verify
+
+kubectl get sa -n webapps
+
+kubectl get role -n webapps
+
+kubectl get rolebinding -n webapps
+
+_____________________________________________________________________________________________________________________________________________
+Step 14 — Generate Service Account Token
+
+For Kubernetes v1.24 and later, generate a token directly:
+
+kubectl create token jenkins -n webapps
+
+Copy the generated token.
+
+In Jenkins:
+
+Manage Jenkins → Credentials → Global
+Add a new Secret Text credential.
+Paste the token.
+Use this credential in the Kubernetes plugin or pipeline.
+
+If you specifically need a long-lived token secret, follow the Kubernetes documentation under "Create additional API tokens" for service accounts.
+
+
+__________________________________________________________________________
+
+Step 15 — Jenkins Pipeline
+
+Add your complete Jenkins Pipeline (Jenkinsfile) here, including:
+
+Git Checkout
+SonarQube Analysis
+Quality Gate
+Trivy Filesystem Scan
+Docker Build
+Trivy Image Scan
+Docker Push
+Kubernetes Deployment
+Post Build Notifications
+
+
+
+Step 16 — Verify the Deployment
+_________________________________________________________________________________________________________________________________________
+
+
+Run the following commands to confirm the application is deployed successfully:
+
+kubectl get nodes
+
+kubectl get namespaces
+
+kubectl get deployments -n webapps
+
+kubectl get pods -n webapps
+
+kubectl get svc -n webapps
+
+kubectl get ingress -n webapps
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+Troubleshooting
+Issue	Solution
+Jenkins not starting	>>>>     sudo systemctl status jenkins and sudo journalctl -u jenkins
+
+Docker permission denied	>>>>   Add the user to the docker group and re-login (sudo usermod -aG docker $USER)
+
+SonarQube not accessible	>>>>   Ensure port 9000 is open in the EC2 security group and the container is running (docker ps)
+
+kubectl connection refused	>>>>   Verify kubeconfig with kubectl config current-context and kubectl cluster-info
+
+EKS node group not joining	>>>   Check IAM permissions, VPC networking, and eksctl get nodegroup --cluster=my-Aniket-EKS-5
+
+Jenkins cannot deploy to Kubernetes	>>>>   Verify the ServiceAccount, Role, RoleBinding, and the token stored in Jenkins credentials
